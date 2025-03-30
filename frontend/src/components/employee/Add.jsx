@@ -19,9 +19,11 @@ const Add = () => {
   const handleChange = (e) => {
     const { name, value, files } = e.target
     if (name === 'image') {
-      setFormData({ ...formData, [name]: files[0] })
+      // setFormData({ ...formData, [name]: files[0] })
+      setFormData((prevData) => ({ ...prevData, [name]: files[0] }))
     } else {
-      setFormData({ ...formData, [name]: value })
+      // setFormData({ ...formData, [name]: value })
+      setFormData((prevData) => ({ ...prevData, [name]: value }))
     }
   }
 
@@ -29,6 +31,7 @@ const Add = () => {
     e.preventDefault()
 
     const formDataObj = new FormData()
+    console.log('Form Data:', formData)
     Object.keys(formData).forEach((key) => {
       formDataObj.append(key, formData[key])
     })
@@ -46,6 +49,7 @@ const Add = () => {
         navigate('/admin-dashboard/employees')
       }
     } catch (error) {
+      console.log('first', error)
       if (error.response && !error.response.data.success) {
         alert(error.response.data.error)
       }
@@ -92,7 +96,7 @@ const Add = () => {
             </label>
             <input
               type="text"
-              name="employee_id"
+              name="employeeId"
               placeholder="Employee ID"
               onChange={handleChange}
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
@@ -137,6 +141,7 @@ const Add = () => {
             </label>
             <select
               name="maritalStatus"
+              placeholder="Marital Status"
               onChange={handleChange}
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
               required

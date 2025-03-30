@@ -1,7 +1,68 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import DataTable from 'react-data-table-component'
 import { Link } from 'react-router-dom'
+import { columns, EmployeeButtons } from '../../utils/EmployeeHelper'
 
 const List = () => {
+  const [employees, setEmployees] = useState([])
+  const [filteredEmployees, setFilteredEmployees] = useState([])
+  const [empLoading, setEmpLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      setEmpLoading(true)
+      try {
+        const response = await axios.get('http://localhost:5000/api/employee', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        })
+        console.log('Response:', response.data)
+        if (response.data.success) {
+          let sno = 1
+          const data = await response.data.employees.map((emp) => ({
+            _id: emp._id,
+            sno: sno++,
+            dep_name: emp.department.dep_name,
+            name: emp.userId.name,
+            dob: new Date(emp.dob).toLocaleDateString(),
+            profileImage: (
+              <img
+                width={40}
+                className="rounded-full"
+                src={`http://localhost:5000/${emp.userId.profileImage}`}
+              />
+            ),
+            action: (
+              <EmployeeButtons
+                Id={emp._id}
+                // onDepartmentDelete={onDepartmentDelete}
+              />
+            ),
+          }))
+          setEmployees(data)
+          setFilteredEmployees(data)
+        }
+        console.log('Departments:', response.data.departments)
+      } catch (error) {
+        if (error.response && !error.response.data.success) {
+          alert(error.response.data.error)
+        }
+      } finally {
+        setEmpLoading(false)
+      }
+    }
+    fetchEmployees()
+  }, [])
+
+  const handleFilter = (e) => {
+    const records = employees.filter((emp) =>
+      emp.name.toLowerCase().includes(e.target.value.toLowerCase()),
+    )
+    setFilteredEmployees(records)
+  }
+
   return (
     <div className="p-6">
       <div className="text-center">
@@ -12,7 +73,7 @@ const List = () => {
           type="text"
           placeholder="Search by Emp Name"
           className="px-4 py-0.5 border"
-          // onChange={filterDepartments}
+          onChange={handleFilter}
         />
         <Link
           to="/admin-dashboard/add-employee"
@@ -20,6 +81,13 @@ const List = () => {
         >
           Add New Employee
         </Link>
+      </div>
+      <div>
+        <DataTable
+          columns={columns}
+          data={filteredEmployees}
+          pagination
+        />
       </div>
     </div>
   )

@@ -1,15 +1,17 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import AdminSummary from './components/dashaboard/AdminSummary'
+import AddDepartment from './components/department/AddDepartment'
+import DepartmentList from './components/department/DepartmentList'
+import EditDepartment from './components/department/EditDepartment'
+import Add from './components/employee/Add'
+import Edit from './components/employee/Edit'
+import List from './components/employee/List'
+import View from './components/employee/View'
 import AdminDashboard from './pages/AdminDashboard'
-import Login from './pages/Login'
 import EmployeeDashboard from './pages/EmployeeDashboard'
+import Login from './pages/Login'
 import PrivateRoutes from './utils/PrivateRoutes'
 import RoleBaseRoutes from './utils/RoleBaseRoutes'
-import AdminSummary from './components/dashaboard/AdminSummary'
-import DepartmentList from './components/department/DepartmentList'
-import AddDepartment from './components/department/AddDepartment'
-import EditDepartment from './components/department/EditDepartment'
-import List from './components/employee/List'
-import Add from './components/employee/Add'
 function App() {
   return (
     <BrowserRouter>
@@ -56,6 +58,14 @@ function App() {
           <Route
             path="/admin-dashboard/add-employee"
             element={<Add />}
+          />
+          <Route
+            path="/admin-dashboard/employees/:id"
+            element={<View />}
+          />
+          <Route
+            path="/admin-dashboard/employees/edit/:id"
+            element={<Edit />}
           />
         </Route>
         <Route
